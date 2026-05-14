@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Calculadora</title>
+</head>
+
+<body>
+    <h1>Calculadora</h1>
+
+    <center>
+        <input id="num1" type="number" placeholder="Número 1">
+        <input id="num2" type="number" placeholder="Número 2">
+
+        <br><br>
+
+        <button onclick="somar()">Somar</button>
+        <button onclick="subtrair()">Subtrair</button>
+        <button onclick="multiplicar()">Multiplicar</button>
+        <button onclick="dividir()">Dividir</button>
+
+        <div id="resultado"></div>
+    </center>
+
+    <script>
+
+
+
+
+
+        // =========================
+        // funções da calculadora
+        // =========================
+
+        function somarCalc(a, b) {
+            return a + b;
+        }
+
+        function subtrairCalc(a, b) {
+            return a - b;
+        }
+
+        function multiplicarCalc(a, b) {
+            return a * b;
+        }
+
+        function dividirCalc(a, b) {
+            if (b === 0) {
+                return null;
+            }
+
+            return a / b;
+        }
+
+        function pegarValores() {
+            const n1 = parseFloat(document.getElementById("num1").value);
+            const n2 = parseFloat(document.getElementById("num2").value);
+
+            if (isNaN(n1) || isNaN(n2)) {
+                return null;
+            }
+
+            return { n1, n2 };
+        }
+
+        function mostrarResultado(texto, erro = false) {
+            const resultadoDiv = document.getElementById("resultado");
+
+            if (erro) {
+                resultadoDiv.innerHTML =
+                    `<span style="color:red;">${texto}</span>`;
+            } else {
+                resultadoDiv.innerHTML =
+                    "Resultado: " + texto;
+            }
+        }
+
+        function somar() {
+            const valores = pegarValores();
+
+            if (!valores) {
+                return mostrarResultado("Digite números válidos", true);
+            }
+
+            mostrarResultado(
+                somarCalc(valores.n1, valores.n2)
+            );
+        }
+
+        function subtrair() {
+            const valores = pegarValores();
+
+            if (!valores) {
+                return mostrarResultado("Digite números válidos", true);
+            }
+
+            mostrarResultado(
+                subtrairCalc(valores.n1, valores.n2)
+            );
+        }
+
+        function multiplicar() {
+            const valores = pegarValores();
+
+            if (!valores) {
+                return mostrarResultado("Digite números válidos", true);
+            }
+
+            mostrarResultado(
+                multiplicarCalc(valores.n1, valores.n2)
+            );
+        }
+
+        function dividir() {
+            const valores = pegarValores();
+
+            if (!valores) {
+                return mostrarResultado("Digite números válidos", true);
+            }
+
+            const resultado = dividirCalc(valores.n1, valores.n2);
+
+            if (resultado === null) {
+                return mostrarResultado("Não pode dividir por 0", true);
+            }
+
+            mostrarResultado(resultado);
+        }
+
+
+
+
+
+
+
+        // =========================
+        // função de teste
+        // =========================
+
+        function testar(nome, fn) {
+
+            try {
+                fn();
+                console.log("✅ CERTO -> " + nome);
+
+            } catch (erro) {
+                console.error("❌ ERRADO -> " + nome);
+                console.error(erro.message);
+            }
+
+        }
+
+
+
+
+
+
+
+
+        // =========================
+        // teste de componentes
+        // =========================
+
+        testar("Input num1 existe", () => {
+
+            const el = document.getElementById("num1");
+
+            if (!el) {
+                throw new Error("num1 não encontrado");
+            }
+
+        });
+
+        testar("Input num2 existe", () => {
+
+            const el = document.getElementById("num2");
+
+            if (!el) {
+                throw new Error("num2 não encontrado");
+            }
+
+        });
+
+        testar("Botões existem", () => {
+
+            const botoes = document.querySelectorAll("button");
+
+            if (botoes.length < 4) {
+                throw new Error("Botões faltando");
+            }
+
+        });
+
+        testar("Div resultado existe", () => {
+
+            const el = document.getElementById("resultado");
+
+            if (!el) {
+                throw new Error("Resultado não encontrado");
+            }
+
+        });
+
+
+
+
+
+        // =========================
+        // teste de funções 
+        // =========================
+
+        testar("Soma funciona", () => {
+
+            if (somarCalc(2, 2) !== 4) {
+                throw new Error("Erro na soma");
+            }
+
+        });
+
+        testar("Subtração funciona", () => {
+
+            if (subtrairCalc(10, 5) !== 5) {
+                throw new Error("Erro na subtração");
+            }
+
+        });
+
+        testar("Multiplicação funciona", () => {
+
+            if (multiplicarCalc(2, 3) !== 6) {
+                throw new Error("Erro na multiplicação");
+            }
+
+        });
+
+        testar("Divisão funciona", () => {
+
+            if (dividirCalc(10, 2) !== 5) {
+                throw new Error("Erro na divisão");
+            }
+
+        });
+
+        testar("Divisão por 0 funciona", () => {
+
+            if (dividirCalc(10, 0) !== null) {
+                throw new Error("Erro divisão por 0");
+            }
+
+        });
+
+
+
+
+
+
+        
+        // =========================
+        // testes de integração
+        // =========================
+
+        testar("Botão somar atualiza resultado", () => {
+
+            document.getElementById("num1").value = 5;
+            document.getElementById("num2").value = 5;
+
+            somar();
+
+            const resultado =
+                document.getElementById("resultado").innerText;
+
+            if (!resultado.includes("10")) {
+                throw new Error("Resultado da soma errado");
+            }
+
+        });
+
+        testar("Erro aparece com campo vazio", () => {
+
+            document.getElementById("num1").value = "";
+            document.getElementById("num2").value = "";
+
+            somar();
+
+            const resultado =
+                document.getElementById("resultado").innerText;
+
+            if (!resultado.includes("Digite números válidos")) {
+                throw new Error("Mensagem de erro não apareceu");
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
